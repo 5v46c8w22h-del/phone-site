@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: 5v46c8w22h-del/phone-site
   branch: main
 
 media_folder: "photos"
