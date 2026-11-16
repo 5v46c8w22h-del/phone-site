@@ -5,22 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>手机编码查询</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 16px; }
-    #search { width: 100%; padding: 12px; font-size: 18px; box-sizing: border-box; }
-    #result { margin-top: 24px; }
-    .gallery img { width: 200px; margin: 6px; border-radius: 6px; cursor: pointer; }
-    .video-link { display: inline-block; margin-top: 12px; padding: 10px 16px; background: #2563eb; color: #fff; text-decoration: none; border-radius: 6px; }
-    #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; }
-    #lightbox img { max-width: 90%; max-height: 90%; }
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 16px; background: #f9f9f9; }
+    #search { width: 100%; padding: 12px; font-size: 18px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; outline: none; }
+    #result { margin-top: 24px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: none; }
+    .gallery img { width: 220px; height: 220px; object-fit: cover; margin: 6px; border-radius: 6px; cursor: pointer; border: 1px solid #eee; }
+    .video-link { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #2563eb; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; }
+    .video-link:hover { background: #1d4ed8; }
+    #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 999; }
+    #lightbox img { max-width: 95%; max-height: 95%; border-radius: 4px; }
   </style>
 </head>
 <body>
   <h1>手机编码查询</h1>
-  <input id="search" placeholder="输入编码，如 A001" autocomplete="off">
+  <input id="search" placeholder="请输入手机编码，如 A001" autocomplete="off">
   <div id="result"></div>
-
-  <div id="lightbox"><img src="" alt=""></div>
-
+  <div id="lightbox"><img src="" alt="大图"></div>
   <script src="app.js"></script>
 </body>
 </html>
