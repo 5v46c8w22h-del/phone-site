@@ -1,7 +1,3 @@
-// 这里已经帮你换成你最新的 BIN ID 了
-const BIN_ID = "6afaaf18ffd5d16053c4d397"; 
-const API_KEY = "$2a$10$XbqceNVBwIrxiOMN/f5RMuMefQ5bzM/5pCDoK6BbR/2JBC11PqFoe";
-
 const input = document.getElementById('search');
 const result = document.getElementById('result');
 const lightbox = document.getElementById('lightbox');
@@ -11,52 +7,88 @@ input.addEventListener('input', async () => {
   const code = input.value.trim();
   if (!code) { result.innerHTML = ''; return; }
 
-  result.innerHTML = '<p>正在查询云端数据...</p>';
-  result.style.display = 'block';
-
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': API_KEY }
-    });
+    // 自动去 data 文件夹找对应的 Markdown 文件
+    const res = await fetch(`data/${code}.md`);
     
-    const json = await res.json();
-    const data = json.record[code]; 
-    
-    if (!data) {
+    if (!res.ok) {
       result.innerHTML = '<p>未找到该编码的手机信息</p>';
+      result.style.display = 'block';
       return;
     }
-
-    let photosHtml = '';
-    if (data.photos && data.photos.length > 0) {
-      // 增加容错：只加载 http 开头的有效链接
-      photosHtml = data.photos.map(p => {
-        if (p && p.startsWith('http')) {
-          return `<img src="${p}" alt="${code}" onerror="this.style.display='none'">`;
-        }
-        return '';
-      }).join('');
+    
+    const text = await res.text();
+    const data = parseMarkdown(text);
+    
+    if (!data.model) {
+      result.innerHTML = '<p>数据解析失败，请检查后台格式</p>';
+      return;
     }
-
-    result.innerHTML = `
-      <h2>${data.model}</h2>
-      <p>编码：${data.code} ｜ 颜色：${data.color} ｜ 存储：${data.storage}</p>
-      <p>${data.note || ''}</p>
-      <div class="gallery">${photosHtml}</div>
-      ${data.video ? `<a class="video-link" href="${data.video}" target="_blank">查看测试视频</a>` : ''}
-    `;
-
-    // 绑定图片放大
-    result.querySelectorAll('.gallery img').forEach(img => {
-      img.addEventListener('click', () => {
-        lightboxImg.src = img.src;
-        lightbox.style.display = 'flex';
-      });
-    });
+    
+    renderResult(data, code);
   } catch (err) {
-    result.innerHTML = '<p>网络请求失败，请刷新重试。</p>';
+    result.innerHTML = '<p>网络错误，请刷新重试</p>';
+    result.style.display = 'block';
   }
 });
+
+// 自动解析后台生成的数据，并自动修正图片路径
+function parseMarkdown(text) {
+  const data = {};
+  const lines = text.split('\n');
+  let inFrontmatter = false;
+  
+  for (let line of lines) {
+    line = line.trim();
+    if (line === '---') {
+      if (!inFrontmatter) { inFrontmatter = true; continue; }
+      else break;
+    }
+    if (inFrontmatter && line.includes(':')) {
+      const idx = line.indexOf(':');
+      const key = line.substring(0, idx).trim();
+      let val = line.substring(idx + 1).trim().replace(/^["']|["']$/g, '');
+      
+      if (key === 'photos') {
+         if (!data.photos) data.photos = [];
+         if (val) {
+             // 【核心修复】自动把带绝对路径的 /photos/xxx 修正为相对路径 photos/xxx
+             let fixedPath = val;
+             if (val.startsWith('/')) {
+                 fixedPath = val.substring(1); // 去掉开头的斜杠
+             }
+             data.photos.push(fixedPath);
+         }
+      } else {
+         data[key] = val;
+      }
+    }
+  }
+  return data;
+}
+
+function renderResult(item, code) {
+  let photosHtml = '';
+  if (item.photos && item.photos.length > 0) {
+    photosHtml = item.photos.map(p => `<img src="${p}" alt="${code}">`).join('');
+  }
+
+  result.innerHTML = `
+    <h2>${item.model}</h2>
+    <p>编码：${item.code || code} ｜ 颜色：${item.color || '未知'} ｜ 存储：${item.storage || '未知'}</p>
+    <p>${item.note || ''}</p>
+    <div class="gallery">${photosHtml}</div>
+    ${item.video ? `<a class="video-link" href="${item.video}" target="_blank" rel="noopener">查看测试视频</a>` : ''}
+  `;
+  result.style.display = 'block';
+
+  result.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightbox.style.display = 'flex';
+    });
+  });
+}
 
 lightbox.addEventListener('click', () => {
   lightbox.style.display = 'none';
