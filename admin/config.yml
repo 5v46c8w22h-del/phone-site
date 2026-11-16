@@ -11,6 +11,9 @@ collections:
     label: "手机信息"
     folder: "data"
     create: true
+    # 下面这行会自动生成 A001.json 而不是 A001.md，方便前端直接读取
+    extension: "json" 
+    format: "json"
     slug: "{{code}}"
     fields:
       - {label: "手机编码", name: "code", widget: "string"}
