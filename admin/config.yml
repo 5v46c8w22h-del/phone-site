@@ -1,0 +1,21 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "photos"
+public_folder: "/photos"
+
+collections:
+  - name: "phones"
+    label: "手机信息"
+    folder: "data"
+    create: true
+    slug: "{{code}}"
+    fields:
+      - {label: "手机编码", name: "code", widget: "string"}
+      - {label: "手机型号", name: "model", widget: "string"}
+      - {label: "颜色", name: "color", widget: "string"}
+      - {label: "存储容量", name: "storage", widget: "string"}
+      - {label: "备注信息", name: "note", widget: "text", required: false}
+      - {label: "测试视频链接", name: "video", widget: "string"}
+      - {label: "手机照片", name: "photos", widget: "list", field: {label: "图片", name: "image", widget: "image"}}
