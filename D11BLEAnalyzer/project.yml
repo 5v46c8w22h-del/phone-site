@@ -1,0 +1,21 @@
+name: D11BLEAnalyzer
+options:
+  bundleIdPrefix: com.smartlabel
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  D11BLEAnalyzer:
+    type: application
+    platform: iOS
+    sources:
+      - App.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.smartlabel.d11bleanalyzer
+        PRODUCT_NAME: D11BLEAnalyzer
+        SWIFT_VERSION: "5.0"
+        INFOPLIST_KEY_CFBundleDisplayName: D11 BLE Analyzer
+        INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription: "用于连接并分析精臣 D11 蓝牙服务、特征值及本工具收发的数据。"
+        INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription: "用于连接并分析精臣 D11 蓝牙通信。"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: YES
